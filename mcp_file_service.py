@@ -3,7 +3,7 @@ import uuid
 from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("File Service")
+mcp = FastMCP("File Service", port=8000)
 FILE = Path("demo.csv")
 
 
@@ -54,4 +54,4 @@ def delete_row(row_id: str) -> str:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="streamable-http")
