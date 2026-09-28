@@ -18,6 +18,18 @@ MCP_SERVERS = {
     },
 }
 
+SYSTEM_PROMPT = """You are an inventory assistant.
+You can ONLY help with:
+- Viewing, adding, updating, and deleting inventory items (using the CSV tools)
+- Math calculations (using the calculator tools)
+
+Rules:
+- Always use the tools to get data. Never guess inventory values.
+- If a question is outside these topics (for example exchange rates, news, weather,
+  or general knowledge), reply exactly:
+  "Sorry, I can only help with inventory and calculations."
+- Never make up numbers or real-time information."""
+
 
 async def run_chat():
     api_key = os.getenv("GEMINI_API_KEY")
@@ -27,7 +39,7 @@ async def run_chat():
     tools = await client.get_tools()
 
     model = ChatGoogleGenerativeAI(model="gemini-3.8-flash", temperature=0, google_api_key=api_key)
-    agent = create_agent(model, tools)
+    agent = create_agent(model, tools, system_prompt=SYSTEM_PROMPT)
 
     while True:
         user_text = input("You: ").strip()
