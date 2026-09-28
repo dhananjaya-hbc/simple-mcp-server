@@ -2,7 +2,7 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import create_agent
 
 load_dotenv()
@@ -20,15 +20,13 @@ MCP_SERVERS = {
 
 
 async def run_chat():
-    api_key = os.getenv("OPENAI_API_KEY")
-
-    os.environ["OPENAI_API_KEY"] = api_key
+    api_key = os.getenv("GEMINI_API_KEY")
 
     client = MultiServerMCPClient(MCP_SERVERS)
 
     tools = await client.get_tools()
 
-    model = ChatOpenAI(model="gpt-4.1-mini", temperature=0)
+    model = ChatGoogleGenerativeAI(model="gemini-3.8-flash", temperature=0, google_api_key=api_key)
     agent = create_agent(model, tools)
 
     while True:
@@ -36,7 +34,7 @@ async def run_chat():
 
         result = await agent.ainvoke({"messages": [{"role": "user", "content": user_text}]})
 
-        assistant_text = result["messages"][-1].content
+        assistant_text = result["messages"][-1].text
         print(f"AI: {assistant_text}\n")
 
 
